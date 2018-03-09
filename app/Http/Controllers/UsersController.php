@@ -16,8 +16,8 @@ class UsersController extends Controller
        'except' => ['show','create','store','index', 'confirmEmail']
      ]);
 
-     $this->middleware('auth',[
-       'guest' => ['create']
+     $a = $this->middleware('guest',[
+       'only' => ['create']
      ]);
    }
 
@@ -54,7 +54,7 @@ class UsersController extends Controller
       // Auth::login($user);先发送验证邮件
       $this->sendEmailConfirmationTo($user);
       session()->flash('success','验证邮件已发送到你的注册邮箱上，请注意查收。');
-      return redirect()->route('/');
+      return redirect('/');
     }
 
     public function edit(User $user)
@@ -92,15 +92,15 @@ class UsersController extends Controller
 
     public function sendEmailConfirmationTo($user)
     {
-      $view = 'emails.confrim';
-      $data = compact('user');
+      $view = 'emails.confirm';
+      $date = compact('user');
       $from = '1025926969@qq.com';
       $name = 'NoNo1';
       $to = $user->email;
       $subject = "感谢注册！";
 
       Mail::send($view,$date,function ($message) use ($from,$name,$to,$subject){
-        $message->from($from,$name)->to($to)->$subject;
+        $message->from($from,$name)->to($to)->subject($subject);
       });
     }
 
