@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Notifications\ResetPassword;
 
 class User extends Authenticatable
 {
@@ -40,5 +41,21 @@ class User extends Authenticatable
     {
       $hash = md5(strtolower(trim($this->attributes['email'])));
       return "http://www.gravatar.com/avatar/$hash?s=$size";
+    }
+
+    public function statuses()
+    {
+      return $this->hasMany(Status::class);
+    }
+
+    public function sendPasswordResetNotification($token)
+    {
+      $this->notify(new ResetPassword($token));
+    }
+
+    public function feed()
+    {
+      return $this->statuses()
+                  ->orderBy('created_at','desc');
     }
 }
